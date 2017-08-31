@@ -1,0 +1,3 @@
+[submodule "subprojects/js0n"]
+	path = subprojects/js0n
+	url = https://github.com/lfxgroove/js0n.git
