@@ -80,7 +80,7 @@ or if they might be of different data types depending on the context. Example us
 
 ## Config
 Config is a very small wrapper around a JSON object, providing some convenience functions to easier
-make casts as the values in a config file are usually known.
+make casts as the keys in a config file are usually known.
 
 ## Log
 A fairly simple and small logging class, you can either access `logging::Log::root()` to get access
@@ -138,8 +138,9 @@ is equivalent to:
     std::string formatted = ss.str();
 ```
 
-### util::extract() Does the opposite of `util::format()`, throws an exception if the value couldn't
-be converted via the stringstream.
+### util::extract()
+Does the opposite of `util::format()`, throws an exception if the value couldn't be converted via
+the stringstream.
 
 ```c++
     int i;
