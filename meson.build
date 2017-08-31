@@ -8,6 +8,7 @@ js0n_dep = dependency('js0n', fallback: ['js0n', 'js0n_dep'])
 sources = ['util.cpp', 'config.cpp', 'json.cpp', 'json_unstructured.cpp', 'logging.cpp']
 test_sources = ['tests/test_main.cpp', 'tests/json.cpp', 'tests/logging.cpp']
 
-#util_lib = library('util', sources, dependencies: [js0n_dep, boost_dep, thread_dep])
-util_dep = declare_dependency(dependencies: [js0n_dep, boost_dep], include_directories: ['./include/'], sources: sources)
-executable('tests', test_sources, link_with: [util_lib], dependencies: [js0n_dep, boost_dep, thread_dep])
+util_inc = include_directories('./include/')
+util_lib = library('util', sources, dependencies: [js0n_dep, boost_dep, thread_dep], include_directories: [util_inc])
+util_dep = declare_dependency(dependencies: [js0n_dep, boost_dep], link_with: [util_lib], include_directories: [util_inc], sources: sources)
+executable('tests', test_sources, dependencies: [util_dep, js0n_dep, boost_dep, thread_dep])
