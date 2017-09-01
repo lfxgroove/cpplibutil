@@ -14,9 +14,14 @@ const Level Level::Info = Level(1u << 1);
 const Level Level::Warn = Level(1u << 2);
 const Level Level::Panic = Level(1u << 3);
 
+//TODO: Should we just coarsely lock every function or do we want to
+//device something smart? Probably doesn't matter too much if we do
+//the coarse thing?
 LogPtr Log::sub(std::string const& name) {
+        lock();
         subLoggers[name] = std::make_shared<SubLog>(name, *this);
         subLoggerStates[name] = true;
+        unlock();
         return subLoggers[name];
 }
 
