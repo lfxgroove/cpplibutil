@@ -67,7 +67,7 @@ bool Log::enable(std::string const& name) {
 }
 
 SubLog::SubLog(std::string name, Log& parent)
-        : Log{name}, parent{parent} {}
+        : Log{name}, parent(parent) {}
 
 void SubLog::dbg(int line, std::string file, std::string msg) {
         parent.dbgInternal(line, file, name, msg);
