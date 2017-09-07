@@ -1,4 +1,4 @@
-project('cpplibutil', 'cpp', default_options: ['cpp_std=c++1z'])
+project('cpplibutil', 'cpp', default_options: ['cpp_std=c++11'])
 thread_dep = dependency('threads')
 boost_dep = dependency('boost', modules:  ['variant', 'uuid'])
 
