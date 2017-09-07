@@ -90,7 +90,7 @@ struct Object {
         // fitting constructor for Object that takes T as a parameter.
         // TODO: create version for map<std::string, ..> as well?
         template<typename T>
-        static std::vector<Object> convert(std::vector<T> const& v, std::enable_if_t<std::is_convertible<T, Object>::value>* = 0) {
+        static std::vector<Object> convert(std::vector<T> const& v, typename std::enable_if<std::is_convertible<T, Object>::value>::type* = 0) {
                 std::vector<Object> res;
                 std::transform(v.begin(), v.end(), std::back_inserter(res),
                                [](T const& t) {

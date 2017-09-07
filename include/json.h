@@ -133,7 +133,7 @@ public:
         // JsonStructuredLookup<int>. Throws ParseError, and any other
         // exceptions thrown by custom parsing helpers
         template<typename T>
-        bool lookup(std::initializer_list<std::string> path, T& t, std::enable_if_t<JsonStructuredLookup<T>::enabled>* = 0) const {
+        bool lookup(std::initializer_list<std::string> path, T& t, typename std::enable_if<JsonStructuredLookup<T>::enabled>::type* = 0) const {
                 auto s = lookupString(path);
                 return JsonStructuredLookup<T>::doConversion(s, t);
         }
@@ -144,7 +144,7 @@ public:
         // convertable. Throws ParseError, and any other exceptions
         // thrown by custom parsing helpers
         template<typename T>
-        bool lookup(std::initializer_list<std::string> path, std::vector<T>& vec, std::enable_if_t<JsonStructuredLookup<T>::enabled>* = 0) const {
+        bool lookup(std::initializer_list<std::string> path, std::vector<T>& vec, typename std::enable_if<JsonStructuredLookup<T>::enabled>::type* = 0) const {
                 auto values = lookupArray(path);
                 bool retVal = true;
                 for (auto const& val : values) {

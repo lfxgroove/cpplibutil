@@ -37,7 +37,7 @@ public:
         // pair didn't exist before, true is returned, otherwise false
         // is returned and the old value is overwritten.
         template<typename T>
-        bool addProperty(Path const& path, std::string const& key, T const& value, std::enable_if_t<std::is_convertible<T, json::Object>::value>* = 0) {
+        bool addProperty(Path const& path, std::string const& key, T const& value, typename std::enable_if<std::is_convertible<T, json::Object>::value>::type* = 0) {
                 json::Property prop{key, json::Object{value}};
                 return cfg.addProperty(path, prop);
         }

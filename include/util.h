@@ -10,6 +10,8 @@
 #include <stdexcept>
 #include <cstring>
 #include <ostream>
+#include <chrono>
+#include <memory> /* unique_ptr */
 // from https://stackoverflow.com/questions/81870/is-it-possible-to-print-a-variables-type-in-standard-c
 #ifndef _MSC_VER
 #  if __cplusplus < 201103
@@ -130,7 +132,9 @@ inline std::ostream& operator<<(std::ostream& os, static_string const& s) {
         return os.write(s.data(), s.size());
 }
 
-// This is preeeetty hacky, but we get somewhat readable type names with this until we can find something else.
+// This is preeeetty hacky, but we get somewhat readable type names with this until we can find
+// something else.
+// TODO: Check if boost has this
 template <class T> CONSTEXPR14_TN static_string type_name() {
 #ifdef __clang__
         static_string p = __PRETTY_FUNCTION__;
@@ -138,7 +142,7 @@ template <class T> CONSTEXPR14_TN static_string type_name() {
 #elif defined(__GNUC__)
         static_string p = __PRETTY_FUNCTION__;
 #  if __cplusplus < 201402
-        return static_string(p.data() + 36, p.size() - 36 - 1);
+        return static_string(p.data() + 48, p.size() - 48 - 1);
 #  else
         return static_string(p.data() + 58, p.size() - 58 - 1);
 #  endif
@@ -153,11 +157,24 @@ struct ExtractionError : std::runtime_error {
         using std::runtime_error::runtime_error;
 };
 
+// Convert a integer to milliseconds
+inline std::chrono::milliseconds ms(typename std::chrono::milliseconds::rep ms) {
+        return std::chrono::milliseconds(ms);
+}
+
+// Ripped form http://en.cppreference.com/w/cpp/memory/unique_ptr/make_unique to enable make_unique
+// in non-c++14 env
+template<typename T, typename... Args>
+std::unique_ptr<T> make_unique(Args&&... args)
+{
+    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+}
+
 // try to extract the type `T` from `s` by using a
 // stringstream. Throws a ExtractionError if the stream is in
 // fail() after the extraction.
 template<typename T>
-T extract(std::string s, std::enable_if_t<std::is_default_constructible<T>::value>* = 0) {
+T extract(std::string s, typename std::enable_if<std::is_default_constructible<T>::value>::type* = 0) {
         T t;
         std::stringstream ss{s};
         ss >> t;

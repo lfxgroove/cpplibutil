@@ -1,5 +1,6 @@
 #include "doctest.h"
 #include "logging.h"
+#include "util.h"
 
 class StringDest : public logging::Dest {
 public:
@@ -15,7 +16,7 @@ std::string StringDest::contents;
 
 TEST_CASE("basic logging works") {
         StringDest::reset();
-        logging::Log l{"root", std::make_unique<StringDest>()};
+        logging::Log l{"root", util::make_unique<StringDest>()};
 
         SUBCASE("messages are logged") {
                 l.setFormat("{msg}");

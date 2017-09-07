@@ -122,7 +122,7 @@ Log::Log(std::string name, std::unique_ptr<Dest>&& dest, Level level /* = Level:
           format{"[{severity} ({name})]: {msg}\n"} {}
 
 Log::Log(std::string name, Level level /* = Level::Info | Level::Warn | Level::Panic */, bool threaded /* = true */)
-        : Log{name, std::make_unique<StdOutDest>(), level} {}
+        : Log{name, util::make_unique<StdOutDest>(), level} {}
 
 void Log::setFormat(std::string newFormat) {
         lock();
