@@ -8,6 +8,7 @@
 #include <sstream>
 #include <iostream>
 #include <algorithm>
+#include <cstdint>
 #include <boost/variant.hpp>
 #include <boost/blank.hpp>
 
@@ -55,7 +56,7 @@ using Path = std::vector<std::string>;
 // Aliases to ease use of into()
 class Object;
 using Str = std::string;
-using Int = int;
+using Int = std::int64_t;
 using Double = double;
 using Bool = bool;
 using Arr = std::vector<Object>;
