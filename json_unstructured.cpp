@@ -390,19 +390,19 @@ std::string Object::prettyPrint(int depth /* = 4*/) const {
                         
                 std::string operator()(boost::blank) const { return ""; }
 
-                std::string operator()(std::string const& val) const { return "\"" + val + "\""; }
+                std::string operator()(Str const& val) const { return "\"" + val + "\""; }
 
                 std::string operator()(NullType const&) const { return "null"; }
 
-                std::string operator()(double const& val) const {
+                std::string operator()(Double const& val) const {
                         return util::format(val);
                 }
 
-                std::string operator()(int const& val) const {
+                std::string operator()(Int const& val) const {
                         return util::format(val);
                 }
 
-                std::string operator()(bool const& val) const {
+                std::string operator()(Bool const& val) const {
                         if (val) {
                                 return "true";
                         } else {
@@ -410,7 +410,7 @@ std::string Object::prettyPrint(int depth /* = 4*/) const {
                         }
                 }
 
-                std::string operator()(std::vector<Object> const& val) const {
+                std::string operator()(Arr const& val) const {
                         std::stringstream ss;
                         ss << "[";
                         for (unsigned i{0}; i < val.size(); ++i) {
@@ -423,7 +423,7 @@ std::string Object::prettyPrint(int depth /* = 4*/) const {
                         return ss.str();
                 }
                 
-                std::string operator()(std::map<std::string, Object> const& val) const {
+                std::string operator()(Obj const& val) const {
                         std::stringstream ss;
                         ss << "{\n";
                         for (auto const& it : val) {
@@ -446,11 +446,11 @@ std::string Object::serialize() const {
         struct Serialize : boost::static_visitor<std::string> {
                 std::string operator()(boost::blank) const { return ""; }
 
-                std::string operator()(std::string const& val) const { return "\"" + val + "\""; }
+                std::string operator()(Str const& val) const { return "\"" + val + "\""; }
 
                 std::string operator()(NullType const&) const { return "null"; }
 
-                std::string operator()(double const& val) const {
+                std::string operator()(Double const& val) const {
                         std::string ret;
                         std::stringstream ss;
                         ss << val;
@@ -458,7 +458,7 @@ std::string Object::serialize() const {
                         return ret;
                 }
 
-                std::string operator()(int const& val) const {
+                std::string operator()(Int const& val) const {
                         std::string ret;
                         std::stringstream ss;
                         ss << val;
@@ -466,7 +466,7 @@ std::string Object::serialize() const {
                         return ret;
                 }
 
-                std::string operator()(bool const& val) const {
+                std::string operator()(Bool const& val) const {
                         if (val) {
                                 return "true";
                         } else {
@@ -474,7 +474,7 @@ std::string Object::serialize() const {
                         }
                 }
 
-                std::string operator()(std::vector<Object> const& val) const {
+                std::string operator()(Arr const& val) const {
                         std::stringstream ss;
                         ss << "[";
                         for (unsigned i{0}; i < val.size(); ++i) {
@@ -487,7 +487,7 @@ std::string Object::serialize() const {
                         return ss.str();
                 }
                 
-                std::string operator()(std::map<std::string, Object> const& val) const {
+                std::string operator()(Obj const& val) const {
                         std::stringstream ss;
                         ss << "{";
                         for (auto it = val.begin(); it != val.end(); ++it) {

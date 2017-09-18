@@ -78,6 +78,7 @@ struct Object {
         Object(char const* value) : Object(std::string(value)) {}
         // Implicit constructors to make life easier
         Object(Str const& value) : value{value} {}
+        Object(std::int32_t const& value) : value{static_cast<Int>(value)} {}
         Object(Int const& value) : value{value} {}
         Object(Double const& value) : value{value} {}
         Object(Bool const& value) : value{value} {}
