@@ -118,11 +118,11 @@ bool Log::enabled(std::string const& name) {
 }
 
 Log::Log(std::string name, std::unique_ptr<Dest>&& dest, Level level /* = Level::Info | Level::Warn | Level::Panic */, bool threaded /* = true */)
-        : name{name}, dest{std::move(dest)}, level{level},
-          format{"[{severity} ({name})]: {msg}\n"} {}
+        : name{name}, dest{std::move(dest)}, level{level}, format{"[{severity} ({name})]: {msg}\n"},
+          threaded{threaded} {}
 
 Log::Log(std::string name, Level level /* = Level::Info | Level::Warn | Level::Panic */, bool threaded /* = true */)
-        : Log{name, util::make_unique<StdOutDest>(), level} {}
+        : Log{name, util::make_unique<StdOutDest>(), level, threaded} {}
 
 void Log::setFormat(std::string newFormat) {
         lock();
