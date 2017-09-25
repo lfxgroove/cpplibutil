@@ -14,5 +14,6 @@ util_dep = declare_dependency(dependencies: [js0n_dep, boost_dep], include_direc
 install_headers('include/util.h', 'include/config.h', 'include/json.h', 'include/json_unstructured.h', 'include/logging.h')
 
 if not meson.is_subproject()
-    executable('tests', test_sources, dependencies: [util_dep, js0n_dep, boost_dep, thread_dep])
+  tests = executable('tests', test_sources, dependencies: [util_dep, js0n_dep, boost_dep, thread_dep])
+  test('util tests', tests)
 endif

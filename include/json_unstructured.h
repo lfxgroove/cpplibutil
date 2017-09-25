@@ -229,6 +229,19 @@ struct Object {
                 return boost::apply_visitor(TypeConversion<T>(), value);
         }
 
+        // Only works when util::extract<T>() exists
+        template<typename T>
+        std::map<std::string, T> into(typename std::enable_if<!std::is_same<T, Object>::value>::type) {
+                Obj o = boost::apply_visitor(TypeConversion<std::map<std::string, T>>(), value);
+                // Obj o = into<Obj>();
+                std::map<std::string, T> res;
+                // for (auto it = o.begin(); it != o.end(); ++it) {
+                for (auto const& it : o) {
+                        res[it.first] = util::extract<T>(it.second);
+                }
+                return res;
+        }
+
         bool operator==(Object const& rhs) const;
         bool operator!=(Object const& rhs) const;
 private:

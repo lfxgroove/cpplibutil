@@ -23,7 +23,7 @@ JsonStructured::JsonStructured(std::istream& stream) {
 }
 
 void JsonStructured::fromStream(std::istream& stream) {
-        json = std::string(std::istreambuf_iterator<char>(stream), {});
+        json = Str{std::string(std::istreambuf_iterator<char>(stream), {})};
         if (stream.bad()) {
                 throw Error{util::format("Unknown error while reading config file `", fileName, "'.")};
         }
@@ -38,7 +38,6 @@ std::vector<std::string> JsonStructured::lookupArray(std::initializer_list<std::
         } else {
                 std::tie(ptr, len) = lookupPath(path);
         }
-
         // (ptr, len) now holds info on the array we want to access
         int i{0};
         size_t vlen;
@@ -75,27 +74,32 @@ std::string JsonStructured::lookupString(std::initializer_list<std::string> path
         if (path.size() == 0) {
                 throw ParseError{"Path for lookup is empty."};
         }
-        char const* ptr;
-        size_t len;
+        char const* ptr{};
+        size_t len{};
         std::tie(ptr, len) = lookupPath(path);
+        assert(len > 0);
         return std::string{ptr, len};
 }
 
 std::tuple<char const*, size_t> JsonStructured::lookupPath(std::initializer_list<std::string> path) const {
+        if (path.size() == 0) {
+                throw ParseError{"Path for lookup is empty."};
+        }
         char const* ptr;
         size_t len;
         auto it = path.begin();
         std::tie(ptr, len) = lookupHelper(*it, json);
+        assert(len > 0);
         ++it;
         if (it != path.end()) {
                 for (; it != path.end(); ++it) {
-                        std::tie(ptr, len) = lookupHelper(*it, std::string(ptr, len));
+                        std::tie(ptr, len) = lookupHelper(*it, Str(ptr, len));
                 }
         }
         return std::make_tuple(ptr, len);
 }
 
-std::tuple<char const*, size_t> JsonStructured::lookupHelper(std::string const& key, std::string const& data) const {
+std::tuple<char const*, size_t> JsonStructured::lookupHelper(std::string const& key, Str const& data) const {
         size_t vlen{};
         char const* ptr = js0n(key.c_str(), key.length(),
                                data.c_str(), data.size(),

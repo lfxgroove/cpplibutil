@@ -14,7 +14,7 @@ TEST_CASE("parsing different values works") {
         "port": 26000,
         "addr": "ff01::1",
         "enable": "false",
-    }
+    },
 }
 )<<<"};
 
@@ -23,6 +23,8 @@ TEST_CASE("parsing different values works") {
         SUBCASE("reading a integer") {
                 int a;
                 CHECK(c.lookup({"bc", "port"}, a));
+                // c.lookup({"bc"}, a);
+                // c.lookup({"ab", "hej"}, a);
                 CHECK(a == 26000);
                 CHECK_FALSE(c.lookup({"bc", "addr"}, a));
                 CHECK_FALSE(c.lookup({"bc", "enable"}, a));
@@ -44,6 +46,14 @@ TEST_CASE("parsing different values works") {
                 CHECK(b);
                 CHECK(c.lookup({"bc", "addr"}, b));
                 CHECK(b);
+        }
+
+        SUBCASE("reading the same bool twice") {
+                bool b;
+                CHECK(c.lookup({"bc", "enable"}, b));
+                CHECK_FALSE(b);
+                CHECK(c.lookup({"bc", "enable"}, b));
+                CHECK_FALSE(b);                
         }
 }
 
@@ -212,5 +222,12 @@ TEST_CASE("pushing to arrays works") {
         CHECK(arr[4].is<json::Bool>());
         CHECK(arr[4].into<json::Bool>());
         CHECK(result.get(1).into<json::Str>() == "mjau");
+}
+
+TEST_CASE("into<T> for std::map<std::string, T> works as well as other overloads") {
+        std::string json{R"<({"mjau": 3, "dog": 2})<"};
+        json::Object result = json::Parser::parse(json);
+        json::Obj obj = result.into<json::Obj>();
+        CHECK(obj["mjau"].into<json::Int>() == 3);
 }
 
