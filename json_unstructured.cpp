@@ -166,7 +166,11 @@ std::tuple<char const*, size_t> Parser::lookupValue(JsonStructured& json, std::s
 }
 
 bool Parser::i(std::string const& s) const {
-        return iPos(s) == s.size() - 1;
+        size_t pos = iPos(s);
+        if (pos == static_cast<size_t>(-1)) {
+                return false;
+        }
+        return pos == s.size() - 1;
 }
 
 bool Parser::dbl(std::string const& s) const {

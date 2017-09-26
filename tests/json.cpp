@@ -231,3 +231,7 @@ TEST_CASE("into<T> for std::map<std::string, T> works as well as other overloads
         CHECK(obj["mjau"].into<json::Int>() == 3);
 }
 
+TEST_CASE("parsing empty strings throws a ParseError") {
+        std::string json{""};
+        CHECK_THROWS_AS(json::Parser::parse(json), json::ParseError const&);
+}
