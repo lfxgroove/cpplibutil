@@ -9,7 +9,6 @@
 #include <chrono>
 
 #include "util.h"
-#include "json_unstructured.h"
 
 namespace json {
 
@@ -85,14 +84,7 @@ struct JsonStructuredLookup<std::chrono::milliseconds> {
         }
 };
 
-template<>
-struct JsonStructuredLookup<Object> {
-        static const bool enabled = true;
-        static bool doConversion(std::string const& val, json::Object& ret) {
-                ret = Parser::parse(val);
-                return true;
-        }
-};
+// class JsonUnstructured;
 
 // JSON parser. Works by being given the path that one wants to
 // examine, for example:
@@ -111,9 +103,16 @@ struct JsonStructuredLookup<Object> {
 // you can use JsonUnstructured which will parse the JSON into a
 // json::Object.
 class JsonStructured {
-        // A string class that allows us to have pointers to substrings of this string.  Use this
-        // with care as we don't ever deallocate the string we get a pointer to. This is probably a
-        // non-sane alternative to a string_view, but we don't have c++17 :(
+        // These two need to know about Str, so we friend them as we don't wanna expose Str to
+        // everyone.
+        friend class JsonUnstructured;
+        friend class Parser;
+        
+        // A string class that allows us to have pointers to substrings of this string. Use this
+        // with care as there is no reference counting for the pointers into the string, so your
+        // pointers will become invalid whenever the dtor for this class runs. This is a non-sane
+        // alternative to a string_view, but we don't have c++17 :(
+        // TODO: Change to c++17 or use refcounting/shared pointers
         class Str {
         public:
                 Str(Str const&) = delete;
@@ -133,6 +132,11 @@ class JsonStructured {
                 Str(std::string inStr) : str{inStr}, ptr{str.c_str()}, len{str.size()} {}
                 Str() : str{""}, ptr{nullptr}, len{0} {}
                 ~Str() {};
+
+                using const_iterator = char const *;
+                const_iterator begin() const { return c_str(); }
+                const_iterator end() const { return c_str() + size(); }
+                
                 char const *c_str() const { return ptr; }
                 size_t size() const { return len; }
         private:
@@ -188,11 +192,11 @@ public:
         // as long as the 
         std::tuple<char const*, size_t> lookupPath(std::initializer_list<std::string> path) const;
         
+private:
         // Retrieve the json string this parser is working on. The string is not guaranteed to
         // contain valid json.
-        std::string data() const { return std::string{json.c_str(), json.size()}; }
+        Str const& data() const { return json; }
         
-private:
         // helper to make lookup()/lookupArray() more pleasant to write.
         std::tuple<char const*, size_t> lookupHelper(std::string const& key, Str const& data) const;
 

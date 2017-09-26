@@ -1,6 +1,7 @@
 #include "doctest.h"
 
 #include "json.h"
+#include "json_unstructured.h"
 #include "test_util.h"
 
 #include <iostream>

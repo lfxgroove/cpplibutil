@@ -7,6 +7,7 @@
 #include <fstream>
 #include <iterator>
 #include <tuple>
+#include <cassert>
 
 namespace json {
 

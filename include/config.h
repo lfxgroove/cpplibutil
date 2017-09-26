@@ -3,6 +3,7 @@
 
 #include <stdexcept>
 #include "json.h"
+#include "json_unstructured.h"
 
 struct ConfigError : std::runtime_error::runtime_error {
         using std::runtime_error::runtime_error;

@@ -12,6 +12,7 @@
 #include <boost/variant.hpp>
 #include <boost/blank.hpp>
 
+#include "json.h"
 #include "util.h"
 
 namespace json {
@@ -311,8 +312,8 @@ private:
         // quotation marks so that strings can be identified
         std::tuple<char const*, size_t> lookupValue(JsonStructured& json, std::string const& key) const;
 
-        std::string findKey(std::string const& s) const;
-        std::string findKey(std::string::const_iterator start, std::string::const_iterator end) const;
+        std::string findKey(JsonStructured::Str const& s) const;
+        std::string findKey(JsonStructured::Str::const_iterator start, JsonStructured::Str::const_iterator end) const;
 
         bool find(std::string const& s, char needle) const {
                 for (char c : s) {
@@ -327,6 +328,15 @@ private:
         }
         
         std::string json{};
+};
+
+template<>
+struct JsonStructuredLookup<Object> {
+        static const bool enabled = true;
+        static bool doConversion(std::string const& val, json::Object& ret) {
+                ret = Parser::parse(val);
+                return true;
+        }
 };
 
 } /* namespace json */

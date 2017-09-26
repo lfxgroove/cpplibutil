@@ -4,12 +4,12 @@
 
 namespace json {
 
-std::string Parser::findKey(std::string const& s) const {
+std::string Parser::findKey(JsonStructured::Str const& s) const {
         return findKey(s.begin(), s.end());
 }
 
-std::string Parser::findKey(std::string::const_iterator start, std::string::const_iterator end) const {
-        std::string::const_iterator resStart = end, resEnd = end;
+std::string Parser::findKey(JsonStructured::Str::const_iterator start, JsonStructured::Str::const_iterator end) const {
+        JsonStructured::Str::const_iterator resStart = end, resEnd = end;
         for (auto it = start; it != end; ++it) {
                 // Means we've reached the end of a key: value pair,
                 // the key didn't start with a " and therefore we
@@ -29,7 +29,8 @@ std::string Parser::findKey(std::string::const_iterator start, std::string::cons
                         resStart = it + 1;
                 }
         }
-        return std::string{resStart, resEnd};
+        assert(resEnd > resStart); // This must always hold true for our cast to be valid down here
+        return std::string{resStart, static_cast<std::string::size_type>(resEnd - resStart)};
 }
 
 Object Parser::parseArr(std::string s) {
@@ -49,7 +50,7 @@ Object Parser::parseObj(std::string s) {
         JsonStructured json{ss};
         
         //find the first key in this object
-        std::string key = findKey(s);
+        std::string key = findKey(json.data());
         if (key == "") {
                 throw ParseError{util::format("Can't find a key for object in input: `", s, "'. Keys must have quotation marks around them.")};
         }
@@ -66,7 +67,7 @@ Object Parser::parseObj(std::string s) {
         while (true) {
                 // jump past what we just handled
                 ptr += len;
-                std::string const& data = json.data();
+                JsonStructured::Str const& data = json.data();
                 key = findKey(data.begin() + (ptr - data.c_str()), data.end());
                 if (key == "") {
                         break;
@@ -149,7 +150,7 @@ std::tuple<char const*, size_t> Parser::lookupValue(JsonStructured& json, std::s
         // Make sure that we keep the string delimiters so that we can
         // properly identify strings if that is needed.
         if (*(ptr - 1) == '"') {
-                std::string const& data = json.data();
+                JsonStructured::Str const& data = json.data();
                 if (data.c_str() + data.size() > ptr) {
                         ptr -= 1;
                         len += 2;
