@@ -221,6 +221,9 @@ private:
         std::map<std::string, bool> subLoggerStates;
 
 public:
+        // TODO: This gives us memory problems when the dynamic library we might be linked in to is
+        // being unloaded. Run tests with valgrind and the problem should show up in _dl_fini() or
+        // something similar.
         static Log& root();
 };
 
